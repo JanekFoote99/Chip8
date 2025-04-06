@@ -21,6 +21,7 @@ public:
   std::uniform_int_distribution<uint8_t> randByte;
 
   void LoadROM(char const* filename);
+  void Cycle();
 
   void OP_00E0();
   void OP_00EE();
@@ -45,7 +46,7 @@ public:
   void OP_Bnnn();
   void OP_Cxkk();
   void OP_Dxyn();
-  void OP_Ex9e();
+  void OP_Ex9E();
   void OP_ExA1();
   void OP_Fx07();
   void OP_Fx0A();
@@ -56,5 +57,30 @@ public:
   void OP_Fx33();
   void OP_Fx55();
   void OP_Fx65();
+
+  typedef void(Chip8::* Chip8Func)();
+  Chip8Func table[0xF + 1];
+  Chip8Func table0[0xE + 1];
+  Chip8Func table8[0xE + 1];
+  Chip8Func tableE[0xE + 1];
+  Chip8Func tableF[0x65 + 1];
+
+  void Table0() {
+    ((*this).*(table0[opcode & 0x000Fu]))();
+  }
+
+  void Table8() {
+    ((*this).*(table8[opcode & 0x000Fu]))();
+  }
+
+  void TableE() {
+    ((*this).*(tableE[opcode & 0x000Fu]))();
+  }
+
+  void TableF() {
+    ((*this).*(tableF[opcode & 0x00FFu]))();
+  }
+
+  void OP_NULL() {}
 };
 
